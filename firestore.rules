@@ -1,0 +1,214 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidLinkedSession(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.businessName is string && data.businessName.size() >= 1 && data.businessName.size() <= 120 &&
+             data.phoneNumber is string && data.phoneNumber.size() >= 3 && data.phoneNumber.size() <= 40 &&
+             data.qrToken is string && data.qrToken.size() >= 1 && data.qrToken.size() <= 200 &&
+             data.isPaired is bool &&
+             data.isBusinessNumberOnline is bool &&
+             data.deviceName is string && data.deviceName.size() >= 1 && data.deviceName.size() <= 100 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidCustomerChat(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.customerName is string && data.customerName.size() >= 1 && data.customerName.size() <= 120 &&
+             data.customerPhone is string && data.customerPhone.size() >= 3 && data.customerPhone.size() <= 40 &&
+             data.avatarColor is string && data.avatarColor.size() >= 4 && data.avatarColor.size() <= 16 &&
+             data.labels is list && data.labels.size() <= 20 && (data.labels.size() == 0 || (data.labels[0] is string && data.labels[0].size() <= 50)) &&
+             data.crmNotes is string && data.crmNotes.size() <= 2000 &&
+             data.lastMessageText is string && data.lastMessageText.size() <= 1000 &&
+             data.unreadCount is int && data.unreadCount >= 0 && data.unreadCount <= 10000 &&
+             data.isPinned is bool &&
+             data.isArchived is bool &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidChatMessage(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.chatId is string && data.chatId.size() >= 1 && data.chatId.size() <= 128 &&
+             data.senderType is string && data.senderType in ['BUSINESS', 'CUSTOMER', 'AUTO_RULE'] &&
+             data.text is string && data.text.size() <= 4000 &&
+             data.attachmentType is string && data.attachmentType in ['NONE', 'IMAGE', 'DOCUMENT', 'VOICE_NOTE'] &&
+             data.attachmentUri is string && data.attachmentUri.size() <= 1000 &&
+             data.attachmentMeta is string && data.attachmentMeta.size() <= 300 &&
+             data.deliveryStatus is string && data.deliveryStatus in ['QUEUED', 'SENT', 'DELIVERED', 'READ'] &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidQuickReplyTemplate(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.shortcut is string && data.shortcut.size() >= 2 && data.shortcut.size() <= 40 &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 100 &&
+             data.body is string && data.body.size() >= 1 && data.body.size() <= 2000 &&
+             data.category is string && data.category.size() >= 1 && data.category.size() <= 60 &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidBroadcastCampaign(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 120 &&
+             data.targetLabels is list && data.targetLabels.size() <= 20 && (data.targetLabels.size() == 0 || (data.targetLabels[0] is string && data.targetLabels[0].size() <= 50)) &&
+             data.recipientCount is int && data.recipientCount >= 0 && data.recipientCount <= 10000 &&
+             data.messageBody is string && data.messageBody.size() >= 1 && data.messageBody.size() <= 3000 &&
+             data.status is string && data.status in ['QUEUED', 'SENT'] &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    function isValidAutomationRule(data) {
+      return data.userId is string && data.userId == request.auth.uid &&
+             data.ruleType is string && data.ruleType in ['GREETING', 'AWAY', 'KEYWORD'] &&
+             data.title is string && data.title.size() >= 1 && data.title.size() <= 100 &&
+             data.triggerCondition is string && data.triggerCondition.size() >= 1 && data.triggerCondition.size() <= 200 &&
+             data.replyMessage is string && data.replyMessage.size() >= 1 && data.replyMessage.size() <= 2000 &&
+             data.isEnabled is bool &&
+             data.createdAt is timestamp && data.createdAt <= request.time &&
+             data.updatedAt is timestamp && data.updatedAt <= request.time;
+    }
+
+    match /users/{userId}/sessions/{sessionId} {
+      allow get: if isSignedIn() && request.auth.uid == userId && isValidId(sessionId);
+      allow list: if isSignedIn() && request.auth.uid == userId && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(sessionId) &&
+                       incoming().keys().hasAll(['userId', 'businessName', 'phoneNumber', 'qrToken', 'isPaired', 'isBusinessNumberOnline', 'deviceName', 'createdAt', 'updatedAt']) &&
+                       incoming().keys().hasOnly(['userId', 'businessName', 'phoneNumber', 'qrToken', 'isPaired', 'isBusinessNumberOnline', 'deviceName', 'createdAt', 'updatedAt']) &&
+                       isValidLinkedSession(incoming());
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(sessionId) &&
+                       isValidLinkedSession(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['businessName', 'phoneNumber', 'qrToken', 'isPaired', 'isBusinessNumberOnline', 'deviceName', 'updatedAt']);
+      allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(sessionId);
+    }
+
+    match /users/{userId}/chats/{chatId} {
+      allow get: if isSignedIn() && request.auth.uid == userId && isValidId(chatId);
+      allow list: if isSignedIn() && request.auth.uid == userId && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(chatId) &&
+                       incoming().keys().hasAll(['userId', 'customerName', 'customerPhone', 'avatarColor', 'labels', 'crmNotes', 'lastMessageText', 'unreadCount', 'isPinned', 'isArchived', 'createdAt', 'updatedAt']) &&
+                       incoming().keys().hasOnly(['userId', 'customerName', 'customerPhone', 'avatarColor', 'labels', 'crmNotes', 'lastMessageText', 'unreadCount', 'isPinned', 'isArchived', 'createdAt', 'updatedAt']) &&
+                       isValidCustomerChat(incoming());
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(chatId) &&
+                       isValidCustomerChat(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['customerName', 'customerPhone', 'avatarColor', 'labels', 'crmNotes', 'lastMessageText', 'unreadCount', 'isPinned', 'isArchived', 'updatedAt']);
+      allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(chatId);
+
+      match /messages/{messageId} {
+        allow get: if isSignedIn() && request.auth.uid == userId && isValidId(chatId) && isValidId(messageId);
+        allow list: if isSignedIn() && request.auth.uid == userId && resource.data.userId == request.auth.uid;
+        allow create: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         isValidId(chatId) &&
+                         isValidId(messageId) &&
+                         incoming().chatId == chatId &&
+                         incoming().keys().hasAll(['userId', 'chatId', 'senderType', 'text', 'attachmentType', 'attachmentUri', 'attachmentMeta', 'deliveryStatus', 'createdAt', 'updatedAt']) &&
+                         incoming().keys().hasOnly(['userId', 'chatId', 'senderType', 'text', 'attachmentType', 'attachmentUri', 'attachmentMeta', 'deliveryStatus', 'createdAt', 'updatedAt']) &&
+                         isValidChatMessage(incoming());
+        allow update: if isSignedIn() &&
+                         request.auth.uid == userId &&
+                         isValidId(chatId) &&
+                         isValidId(messageId) &&
+                         isValidChatMessage(incoming()) &&
+                         incoming().userId == existing().userId &&
+                         incoming().chatId == existing().chatId &&
+                         incoming().createdAt == existing().createdAt &&
+                         incoming().diff(existing()).affectedKeys().hasOnly(['text', 'deliveryStatus', 'updatedAt']);
+        allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(chatId) && isValidId(messageId);
+      }
+    }
+
+    match /users/{userId}/templates/{templateId} {
+      allow get: if isSignedIn() && request.auth.uid == userId && isValidId(templateId);
+      allow list: if isSignedIn() && request.auth.uid == userId && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(templateId) &&
+                       incoming().keys().hasAll(['userId', 'shortcut', 'title', 'body', 'category', 'createdAt', 'updatedAt']) &&
+                       incoming().keys().hasOnly(['userId', 'shortcut', 'title', 'body', 'category', 'createdAt', 'updatedAt']) &&
+                       isValidQuickReplyTemplate(incoming());
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(templateId) &&
+                       isValidQuickReplyTemplate(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['shortcut', 'title', 'body', 'category', 'updatedAt']);
+      allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(templateId);
+    }
+
+    match /users/{userId}/broadcasts/{broadcastId} {
+      allow get: if isSignedIn() && request.auth.uid == userId && isValidId(broadcastId);
+      allow list: if isSignedIn() && request.auth.uid == userId && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(broadcastId) &&
+                       incoming().keys().hasAll(['userId', 'title', 'targetLabels', 'recipientCount', 'messageBody', 'status', 'createdAt', 'updatedAt']) &&
+                       incoming().keys().hasOnly(['userId', 'title', 'targetLabels', 'recipientCount', 'messageBody', 'status', 'createdAt', 'updatedAt']) &&
+                       isValidBroadcastCampaign(incoming());
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(broadcastId) &&
+                       isValidBroadcastCampaign(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['status', 'recipientCount', 'updatedAt']);
+      allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(broadcastId);
+    }
+
+    match /users/{userId}/rules/{ruleId} {
+      allow get: if isSignedIn() && request.auth.uid == userId && isValidId(ruleId);
+      allow list: if isSignedIn() && request.auth.uid == userId && resource.data.userId == request.auth.uid;
+      allow create: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(ruleId) &&
+                       incoming().keys().hasAll(['userId', 'ruleType', 'title', 'triggerCondition', 'replyMessage', 'isEnabled', 'createdAt', 'updatedAt']) &&
+                       incoming().keys().hasOnly(['userId', 'ruleType', 'title', 'triggerCondition', 'replyMessage', 'isEnabled', 'createdAt', 'updatedAt']) &&
+                       isValidAutomationRule(incoming());
+      allow update: if isSignedIn() &&
+                       request.auth.uid == userId &&
+                       isValidId(ruleId) &&
+                       isValidAutomationRule(incoming()) &&
+                       incoming().userId == existing().userId &&
+                       incoming().createdAt == existing().createdAt &&
+                       incoming().diff(existing()).affectedKeys().hasOnly(['ruleType', 'title', 'triggerCondition', 'replyMessage', 'isEnabled', 'updatedAt']);
+      allow delete: if isSignedIn() && request.auth.uid == userId && isValidId(ruleId);
+    }
+  }
+}

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <!-- Chat Bubble Silhouette -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M30,30h48c4.4,0 8,3.6 8,8v26c0,4.4 -3.6,8 -8,8H46l-14,10v-10h-2c-4.4,0 -8,-3.6 -8,-8V38C22,33.6 25.6,30 30,30z" />
+    <!-- QR Finder Squares inside Bubble -->
+    <path
+        android:fillColor="#0B6E4F"
+        android:pathData="M32,38h14v14H32V38zM35,41v8h8v-8H35zM37,43h4v4h-4V43z" />
+    <path
+        android:fillColor="#0B6E4F"
+        android:pathData="M62,38h14v14H62V38zM65,41v8h8v-8H65zM67,43h4v4h-4V43z" />
+    <path
+        android:fillColor="#0B6E4F"
+        android:pathData="M32,54h10v10H32V54zM35,57v4h4v-4H35z" />
+    <!-- Live Sync Pulse & QR Data Dots -->
+    <path
+        android:fillColor="#D97706"
+        android:pathData="M50,42h8v4h-8V42zM50,50h8v4h-8V50zM46,56h12v6H46V56zM62,56h14v6H62V56z" />
+</vector>

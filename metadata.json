@@ -1,0 +1,10 @@
+{
+  "name": "BizSync WA",
+  "description": "Live WhatsApp Business companion app with QR code number pairing, real-time internet sync, CRM labels, quick replies, broadcasts, and automated rules.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

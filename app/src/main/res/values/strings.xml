@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">BizSync WA</string>
+    <string name="auth_headline">Live WhatsApp Business Sync &amp; CRM</string>
+    <string name="auth_subtitle">Link your business WhatsApp number via QR code for real-time internet message sync, customer CRM tags, quick replies, and bulk broadcasts.</string>
+    <string name="sign_in_google">Sign in with Google</string>
+    <string name="nav_chats">Chats</string>
+    <string name="nav_broadcasts">Broadcasts</string>
+    <string name="nav_tools">Business Tools</string>
+    <string name="status_live_synced">LIVE &amp; SYNCED</string>
+    <string name="status_number_offline">WA NUMBER OFFLINE</string>
+    <string name="status_device_offline">DEVICE OFFLINE</string>
+    <string name="status_unpaired">QR UNPAIRED</string>
+    <string name="action_scan_qr">Link QR</string>
+    <string name="action_simulate_incoming">Simulate Customer Msg</string>
+    <string name="action_new_chat">New Customer Chat</string>
+    <string name="search_chats_hint">Search customer name, phone, or CRM notes…</string>
+    <string name="composer_hint">Type a message or / for quick replies…</string>
+    <string name="empty_chats_title">No conversations match this filter</string>
+    <string name="empty_chats_subtitle">Start a new customer conversation or tap Simulate Customer Msg to test live WhatsApp sync.</string>
+</resources>

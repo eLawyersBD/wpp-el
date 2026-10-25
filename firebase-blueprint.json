@@ -1,0 +1,371 @@
+{
+  "entities": {
+    "LinkedSession": {
+      "title": "LinkedSession",
+      "description": "Represents a WhatsApp Business number session paired via QR code.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the authenticated workspace owner."
+        },
+        "businessName": {
+          "type": "string",
+          "description": "Display name of the linked WhatsApp Business account."
+        },
+        "phoneNumber": {
+          "type": "string",
+          "description": "WhatsApp Business phone number."
+        },
+        "qrToken": {
+          "type": "string",
+          "description": "QR pairing token used to establish the live session."
+        },
+        "isPaired": {
+          "type": "boolean",
+          "description": "Whether the QR code handshake is currently active."
+        },
+        "isBusinessNumberOnline": {
+          "type": "boolean",
+          "description": "Whether the host WhatsApp Business phone has active internet."
+        },
+        "deviceName": {
+          "type": "string",
+          "description": "Companion device identifier."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of initial pairing."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last status sync."
+        }
+      },
+      "required": [
+        "userId",
+        "businessName",
+        "phoneNumber",
+        "qrToken",
+        "isPaired",
+        "isBusinessNumberOnline",
+        "deviceName",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CustomerChat": {
+      "title": "CustomerChat",
+      "description": "Represents a customer conversation thread synced with the business number.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the authenticated workspace owner."
+        },
+        "customerName": {
+          "type": "string",
+          "description": "Customer display name."
+        },
+        "customerPhone": {
+          "type": "string",
+          "description": "Customer WhatsApp phone number."
+        },
+        "avatarColor": {
+          "type": "string",
+          "description": "Hex color code for customer avatar badge."
+        },
+        "labels": {
+          "type": "string",
+          "description": "Bounded list of CRM labels assigned to the customer."
+        },
+        "crmNotes": {
+          "type": "string",
+          "description": "Internal CRM contact notes and deal context."
+        },
+        "lastMessageText": {
+          "type": "string",
+          "description": "Preview of the most recent message in the thread."
+        },
+        "unreadCount": {
+          "type": "integer",
+          "description": "Count of unread customer messages."
+        },
+        "isPinned": {
+          "type": "boolean",
+          "description": "Whether the conversation is pinned to the top of the inbox."
+        },
+        "isArchived": {
+          "type": "boolean",
+          "description": "Whether the conversation is archived."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when thread was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp of last thread activity."
+        }
+      },
+      "required": [
+        "userId",
+        "customerName",
+        "customerPhone",
+        "avatarColor",
+        "labels",
+        "crmNotes",
+        "lastMessageText",
+        "unreadCount",
+        "isPinned",
+        "isArchived",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ChatMessage": {
+      "title": "ChatMessage",
+      "description": "Individual message inside a customer chat thread.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the authenticated workspace owner."
+        },
+        "chatId": {
+          "type": "string",
+          "description": "Parent CustomerChat ID."
+        },
+        "senderType": {
+          "type": "string",
+          "enum": ["BUSINESS", "CUSTOMER", "AUTO_RULE"],
+          "description": "Origin of the message."
+        },
+        "text": {
+          "type": "string",
+          "description": "Message body text."
+        },
+        "attachmentType": {
+          "type": "string",
+          "enum": ["NONE", "IMAGE", "DOCUMENT", "VOICE_NOTE"],
+          "description": "Type of media attachment."
+        },
+        "attachmentUri": {
+          "type": "string",
+          "description": "URI or reference of attached media."
+        },
+        "attachmentMeta": {
+          "type": "string",
+          "description": "Metadata such as file name, size, or voice note duration."
+        },
+        "deliveryStatus": {
+          "type": "string",
+          "enum": ["QUEUED", "SENT", "DELIVERED", "READ"],
+          "description": "Live WhatsApp message sync and delivery state."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when message was created."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server timestamp when message status was last updated."
+        }
+      },
+      "required": [
+        "userId",
+        "chatId",
+        "senderType",
+        "text",
+        "attachmentType",
+        "attachmentUri",
+        "attachmentMeta",
+        "deliveryStatus",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "QuickReplyTemplate": {
+      "title": "QuickReplyTemplate",
+      "description": "Reusable canned response template triggered by /shortcut.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the authenticated workspace owner."
+        },
+        "shortcut": {
+          "type": "string",
+          "description": "Slash shortcut trigger such as /welcome or /pricing."
+        },
+        "title": {
+          "type": "string",
+          "description": "Template title."
+        },
+        "body": {
+          "type": "string",
+          "description": "Template message text with optional placeholders."
+        },
+        "category": {
+          "type": "string",
+          "description": "Template category label."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "shortcut",
+        "title",
+        "body",
+        "category",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "BroadcastCampaign": {
+      "title": "BroadcastCampaign",
+      "description": "Bulk message broadcast campaign targeting customer segments.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the authenticated workspace owner."
+        },
+        "title": {
+          "type": "string",
+          "description": "Campaign title."
+        },
+        "targetLabels": {
+          "type": "string",
+          "description": "Bounded list of target CRM labels."
+        },
+        "recipientCount": {
+          "type": "integer",
+          "description": "Number of chats receiving the broadcast."
+        },
+        "messageBody": {
+          "type": "string",
+          "description": "Broadcast message content."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["QUEUED", "SENT"],
+          "description": "Dispatch state of the broadcast."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "title",
+        "targetLabels",
+        "recipientCount",
+        "messageBody",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AutomationRule": {
+      "title": "AutomationRule",
+      "description": "Automated greeting, away, or keyword response rule.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "description": "UID of the authenticated workspace owner."
+        },
+        "ruleType": {
+          "type": "string",
+          "enum": ["GREETING", "AWAY", "KEYWORD"],
+          "description": "Type of automated response rule."
+        },
+        "title": {
+          "type": "string",
+          "description": "Human-readable rule title."
+        },
+        "triggerCondition": {
+          "type": "string",
+          "description": "Trigger description or keyword."
+        },
+        "replyMessage": {
+          "type": "string",
+          "description": "Automated message sent when rule fires."
+        },
+        "isEnabled": {
+          "type": "boolean",
+          "description": "Whether the rule is currently active."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server creation timestamp."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Server update timestamp."
+        }
+      },
+      "required": [
+        "userId",
+        "ruleType",
+        "title",
+        "triggerCondition",
+        "replyMessage",
+        "isEnabled",
+        "createdAt",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/users/{userId}/sessions/{sessionId}": {
+      "schema": "LinkedSession",
+      "description": "Stores QR-paired WhatsApp Business number sessions per user."
+    },
+    "/users/{userId}/chats/{chatId}": {
+      "schema": "CustomerChat",
+      "description": "Stores synced customer conversations, labels, and CRM notes."
+    },
+    "/users/{userId}/chats/{chatId}/messages/{messageId}": {
+      "schema": "ChatMessage",
+      "description": "Stores live messages and attachments inside each customer chat."
+    },
+    "/users/{userId}/templates/{templateId}": {
+      "schema": "QuickReplyTemplate",
+      "description": "Stores reusable quick-reply templates."
+    },
+    "/users/{userId}/broadcasts/{broadcastId}": {
+      "schema": "BroadcastCampaign",
+      "description": "Stores bulk broadcast campaigns."
+    },
+    "/users/{userId}/rules/{ruleId}": {
+      "schema": "AutomationRule",
+      "description": "Stores auto-greeting, away, and keyword rules."
+    }
+  }
+}

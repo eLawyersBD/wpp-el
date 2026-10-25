@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:aapt="http://schemas.android.com/aapt"
+    android:width="360dp"
+    android:height="180dp"
+    android:viewportWidth="360"
+    android:viewportHeight="180">
+    <path android:pathData="M0,0h360v180h-360z">
+        <aapt:attr name="android:fillColor">
+            <gradient
+                android:startX="0"
+                android:startY="0"
+                android:endX="360"
+                android:endY="180"
+                android:type="linear">
+                <item android:color="#064E3B" android:offset="0.0" />
+                <item android:color="#0B6E4F" android:offset="0.55" />
+                <item android:color="#0F4C5C" android:offset="1.0" />
+            </gradient>
+        </aapt:attr>
+    </path>
+    <!-- Decorative signal rings -->
+    <path
+        android:fillColor="#14FFFFFF"
+        android:pathData="M280,90m-75,0a75,75 0,1 1,150 0a75,75 0,1 1,-150 0" />
+    <path
+        android:fillColor="#22FFFFFF"
+        android:pathData="M280,90m-52,0a52,52 0,1 1,104 0a52,52 0,1 1,-104 0" />
+    <!-- QR Card Frame -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M244,54h72v72h-72z" />
+    <path
+        android:fillColor="#0B6E4F"
+        android:pathData="M252,62h20v20h-20zM256,66v12h12v-12zM288,62h20v20h-20zM292,66v12h12v-12zM252,98h20v20h-20zM256,102v12h12v-12zM280,90h12v12h-12zM296,98h12v20h-12z" />
+    <!-- Floating Chat Card Left -->
+    <path
+        android:fillColor="#26FFFFFF"
+        android:pathData="M24,38h165v42h-165z" />
+    <path
+        android:fillColor="#34D399"
+        android:pathData="M36,52h84v6h-84zM36,64h120v5h-120z" />
+    <path
+        android:fillColor="#26FFFFFF"
+        android:pathData="M48,96h165v42h-165z" />
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M60,110h96v6h-96zM60,122h130v5h-130z" />
+</vector>
